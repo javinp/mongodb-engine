@@ -2,11 +2,16 @@ from cStringIO import StringIO
 from django.core.management import call_command
 from django.db import connection, connections
 from django.db.utils import DatabaseError, IntegrityError
+from django.db.models import Q
 from django.contrib.sites.models import Site
 
-from pymongo.objectid import InvalidId
 from pymongo import ASCENDING, DESCENDING
 from gridfs import GridFS, GridOut
+# handle pymongo backward compatibility
+try:
+    from bson.objectid import InvalidId, ObjectId
+except ImportError:
+    from pymongo.objectid import InvalidId, ObjectId
 
 from django_mongodb_engine.base import DatabaseWrapper
 from django_mongodb_engine.serializer import LazyModelInstance
@@ -112,7 +117,6 @@ class RegressionTests(TestCase):
     @skip("Needs changes in ListField/db_type")
     def test_issue_47(self):
         """ ForeignKeys in subobjects should be ObjectIds, not unicode """
-        from bson.objectid import ObjectId
         from query.models import Blog, Post
         post = Post.objects.create(blog=Blog.objects.create())
         m = Issue47Model.objects.create(foo=[post])
@@ -169,6 +173,11 @@ class RegressionTests(TestCase):
             for i in xrange(randint(0, 20)):
                 q = getattr(q, 'filter' if randint(0, 1) else 'exclude')(raw=i)
             list(q)
+
+    def test_issue_89(self):
+        query = [Q(raw='a') | Q(raw='b'),
+                 Q(raw='c') | Q(raw='d')]
+        self.assertRaises(AssertionError, RawModel.objects.get, *query)
 
 class DatabaseOptionTests(TestCase):
     """ Tests for MongoDB-specific database options """
@@ -474,3 +483,14 @@ class GridFSFieldTests(TestCase):
             DatabaseError, "Updates on GridFSFields are not allowed",
             GridFSFieldTestModel.objects.update, gridfile='x'
         )
+
+class CappedCollectionTests(TestCase):
+    def test_collection_size(self):
+        for _ in range(100):
+            CappedCollection.objects.create()
+        self.assertLess(CappedCollection.objects.count(), 100)
+
+    def test_collection_max(self):
+        for _ in range(100):
+            CappedCollection2.objects.create()
+        self.assertEqual(CappedCollection2.objects.count(), 2)

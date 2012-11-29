@@ -46,7 +46,7 @@ class RawQueryMixin:
             queryset = self.filter(spec_or_q)
         queryset._for_write = True
         compiler = _compiler_for_queryset(queryset, 'SQLUpdateCompiler')
-        compiler.execute_raw(update_dict, **kwargs)
+        compiler.execute_update(update_dict, **kwargs)
 
     raw_update.alters_data = True
 
@@ -153,4 +153,5 @@ class MongoDBManager(models.Manager, RawQueryMixin):
         return MongoDBQuerySet(self.model, using=self._db)
 
     def distinct(self, *args, **kwargs):
+        """ Runs a :meth:`~pymongo.Collection.distinct` query against the database. """
         return self.get_query_set().distinct(*args, **kwargs)

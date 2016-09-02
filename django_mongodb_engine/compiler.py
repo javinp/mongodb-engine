@@ -86,7 +86,7 @@ class MongoQuery(NonrelQuery):
         results = self._get_results()
         if limit is not None:
             results.limit(limit)
-        return results.count(with_limit_and_skip=with_limit_and_skip)
+        return results.count(with_limit_and_skip=True)
 
     @safe_call
     def order_by(self, ordering):

@@ -108,11 +108,12 @@ class MongoQuery(NonrelQuery):
             yield entity
 
     @safe_call
-    def count(self, limit=None):
+    def count(self, limit=None, with_limit_and_skip=False):
         results = self.get_cursor()
-        if limit is not None:
-            results.limit(limit)
-        return results.count()
+        #################################
+        # Put 10000 hard-limit on count #
+        #################################
+        return results.limit(10000).count(with_limit_and_skip=True)
 
     @safe_call
     def order_by(self, ordering):

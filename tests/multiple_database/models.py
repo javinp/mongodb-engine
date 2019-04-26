@@ -1,3 +1,4 @@
+from builtins import object
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -9,7 +10,7 @@ class Review(models.Model):
     def __unicode__(self):
         return self.source
 
-    class Meta:
+    class Meta(object):
         ordering = ('source',)
 
 class PersonManager(models.Manager):
@@ -23,7 +24,7 @@ class Person(models.Model):
     def __unicode__(self):
         return self.name
 
-    class Meta:
+    class Meta(object):
         ordering = ('name',)
 
 # This book manager doesn't do anything interesting; it just
@@ -49,7 +50,7 @@ class Book(models.Model):
     def __unicode__(self):
         return self.title
 
-    class Meta:
+    class Meta(object):
         ordering = ('title',)
 
 class Pet(models.Model):
@@ -59,12 +60,12 @@ class Pet(models.Model):
     def __unicode__(self):
         return self.name
 
-    class Meta:
+    class Meta(object):
         ordering = ('name',)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, null=True)
     flavor = models.CharField(max_length=100)
 
-    class Meta:
+    class Meta(object):
         ordering = ('flavor',)

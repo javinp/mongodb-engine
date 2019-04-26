@@ -1,7 +1,11 @@
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import datetime
 import pickle
 import sys
-from StringIO import StringIO
+from io import StringIO
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -10,12 +14,12 @@ from django.db import connections, router, DEFAULT_DB_ALIAS
 from django.db.models import signals
 from django.db.utils import ConnectionRouter, DatabaseError
 
-from models import Book, Person, Pet, Review, UserProfile
+from .models import Book, Person, Pet, Review, UserProfile
 
 try:
     # we only have these models if the user is using multi-db, it's safe the
     # run the tests without them though.
-    from models import Article, article_using
+    from .models import Article, article_using
 except ImportError:
     pass
 

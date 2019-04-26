@@ -1,3 +1,4 @@
+from builtins import object
 from warnings import warn
 
 from djangotoolbox.fields import RawField, AbstractIterableField, \
@@ -13,7 +14,7 @@ DJANGOTOOLBOX_FIELDS = (RawField, AbstractIterableField, EmbeddedModelField)
 class A(object):
 
     def __init__(self, op, value):
-        warn("A() queries are deprecated as of 0.5 and will be removed in 0.6.", DeprecationWarning) 
+        warn("A() queries are deprecated as of 0.5 and will be removed in 0.6.", DeprecationWarning)
 
         self.op = op
         self.val = value

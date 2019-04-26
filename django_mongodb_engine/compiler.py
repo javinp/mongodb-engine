@@ -1,3 +1,5 @@
+from future.utils import raise_with_traceback
+
 from functools import wraps
 import re
 import sys
@@ -82,10 +84,12 @@ def safe_call(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except DuplicateKeyError, e:
-            raise IntegrityError, IntegrityError(smart_str(e)), sys.exc_info()[2]
-        except PyMongoError, e:
-            raise DatabaseError, DatabaseError(smart_str(e)), sys.exc_info()[2]
+        except DuplicateKeyError as e:
+            raise_with_traceback(IntegrityError(IntegrityError(smart_str(e))))
+
+        except PyMongoError as e:
+            raise_with_traceback(DatabaseError(DatabaseError(smart_str(e))))
+
     return wrapper
 
 
@@ -228,7 +232,7 @@ class MongoQuery(NonrelQuery):
                     # {'a': o1} + {'a': {'$not': o2}} -->
                     #     {'a': {'$all': [o1], '$nin': [o2]}}
                     if already_negated:
-                        assert lookup.keys() == ['$ne']
+                        assert list(lookup.keys()) == ['$ne']
                         lookup = lookup['$ne']
                     assert not isinstance(lookup, dict)
                     subquery[column] = {'$all': [existing], '$nin': [lookup]}
@@ -237,8 +241,8 @@ class MongoQuery(NonrelQuery):
                 if not_:
                     assert not existing
                     if isinstance(lookup, dict):
-                        assert lookup.keys() == ['$ne']
-                        lookup = lookup.values()[0]
+                        assert list(lookup.keys()) == ['$ne']
+                        lookup = list(lookup.values())[0]
                     assert not isinstance(lookup, dict), (not_, lookup)
                     if self._negated:
                         # {'not': {'a': o1}} + {'a': {'not': o2}} -->
@@ -273,8 +277,8 @@ class MongoQuery(NonrelQuery):
                                 # {'$gt': o1} + {'$lt': o2}
                                 #    --> {'$gt': o1, '$lt': o2}
                                 assert all(key not in existing
-                                           for key in lookup.keys()), \
-                                       [lookup, existing]
+                                           for key in list(lookup.keys())), \
+                                        [lookup, existing]
                                 existing.update(lookup)
                     else:
                         key = '$nin' if self._negated else '$all'
@@ -301,7 +305,7 @@ class SQLCompiler(NonrelCompiler):
         Handles aggregate/count queries.
         """
         collection = self.get_collection()
-        aggregations = self.query.aggregate_select.items()
+        aggregations = list(self.query.aggregate_select.items())
 
         if len(aggregations) == 1 and isinstance(aggregations[0][1],
                                                  sqlaggregates.Count):

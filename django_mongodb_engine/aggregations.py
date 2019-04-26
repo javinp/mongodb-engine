@@ -1,3 +1,6 @@
+from builtins import object
+
+
 class MongoAggregate(object):
     is_ordinal = False
     is_computed = False

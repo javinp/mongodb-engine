@@ -15,6 +15,7 @@ function reduce(id, values) {
 """
 
 __test__ = {'mapreduce': """
+>>> from __future__ import print_function
 >>> from nonrelblog.models import *
 
 Add some data so we can actually mapreduce anything.
@@ -37,7 +38,7 @@ Kick off the Map/Reduce:
 >>> pairs = Post.objects.map_reduce(mapfunc, reducefunc, out='temp',
 ...                                 delete_collection=True)
 >>> for pair in pairs:
-...     print pair.key, pair.value
+...     print(pair.key, pair.value)
 Alice 9.0
 Ann 6.0
 Bob 3.0

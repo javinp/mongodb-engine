@@ -1,5 +1,10 @@
 from __future__ import with_statement
-from cStringIO import StringIO
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+from builtins import object
+from io import StringIO
 
 from django.core.management import call_command
 from django.contrib.sites.models import Site
@@ -9,10 +14,10 @@ from django.db.models import Q
 from gridfs import GridOut
 from pymongo import ASCENDING, DESCENDING, ReadPreference, version_tuple as pymongo_version
 from django_mongodb_engine.base import DatabaseWrapper
-from models import *
+from .models import *
 
 
-from utils import *
+from .utils import *
 
 
 class MongoDBEngineTests(TestCase):
@@ -143,7 +148,7 @@ class RegressionTests(TestCase):
         self.assertEqual(obj, CustomIDModel2.objects.get(id=41))
 
     def test_multiple_exclude(self):
-        objs = [RawModel.objects.create(raw=i) for i in xrange(1, 6)]
+        objs = [RawModel.objects.create(raw=i) for i in range(1, 6)]
         self.assertEqual(
             objs[-1],
             RawModel.objects.exclude(raw=1).exclude(raw=2)
@@ -159,12 +164,12 @@ class RegressionTests(TestCase):
     def test_multiple_exclude_random(self):
         from random import randint
 
-        for i in xrange(20):
+        for i in range(20):
             RawModel.objects.create(raw=i)
 
-        for i in xrange(10):
+        for i in range(10):
             q = RawModel.objects.all()
-            for i in xrange(randint(0, 20)):
+            for i in range(randint(0, 20)):
                 q = getattr(q, 'filter' if randint(0, 1) else 'exclude')(raw=i)
             list(q)
 
@@ -242,7 +247,7 @@ class DatabaseOptionTests(TestCase):
                 ]:
                     cls_code.append('    ' + line % name)
 
-            exec '\n'.join(cls_code) in locals()
+            exec('\n'.join(cls_code), locals())
 
             options = {'OPTIONS': {'OPERATIONS': flags}}
             with self.custom_database_wrapper(options, collection_class=Collection):
@@ -335,7 +340,7 @@ class NewStyleIndexTests(TestCase):
 
         self.assertIn(index_name, info)
 
-        for key, value in dict(default_properties, **properties).iteritems():
+        for key, value in dict(default_properties, **properties).items():
             self.assertEqual(info[index_name][key], value)
 
 

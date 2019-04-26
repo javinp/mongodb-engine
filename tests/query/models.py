@@ -1,3 +1,4 @@
+from builtins import object
 from django.db import models
 from django.conf import settings
 
@@ -19,7 +20,7 @@ class IntegerModel(models.Model):
 class Blog(models.Model):
     title = models.CharField(max_length=200, db_index=True)
 
-    class Meta:
+    class Meta(object):
         ordering = ['id']
 
 
@@ -37,7 +38,7 @@ class Person(models.Model):
     age = models.IntegerField(null=True, blank=True)
     another_age = models.IntegerField(null=True, blank=True, db_column='age2')
 
-    class Meta:
+    class Meta(object):
         unique_together = ('name', 'surname')
 
 

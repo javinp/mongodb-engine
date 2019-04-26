@@ -1,5 +1,8 @@
 from __future__ import with_statement
+from __future__ import absolute_import
 
+from builtins import next
+from builtins import range
 from functools import partial
 
 from django.db.models import Q
@@ -7,8 +10,8 @@ from django.db.utils import DatabaseError
 
 from django_mongodb_engine.contrib import MapReduceResult
 
-from models import *
-from utils import TestCase, get_collection, skip
+from .models import *
+from .utils import TestCase, get_collection, skip
 
 
 class MapReduceTests(TestCase):
@@ -69,7 +72,7 @@ class MapReduceTests(TestCase):
                              len(random_numbers) - 1)
 
             # Test drop_collection.
-            map_reduce(drop_collection=True).next()
+            next(map_reduce(drop_collection=True))
             self.assertEqual(get_collection('m/r-out').count(), 0)
 
         # Test arbitrary kwargs.
@@ -108,8 +111,8 @@ class MapReduceTests(TestCase):
             somedoc = MapReduceModelWithCustomPrimaryKey.objects \
                             .inline_map_reduce(mapfunc, reducefunc)[0]
         else:
-            somedoc = MapReduceModelWithCustomPrimaryKey.objects.map_reduce(
-                            mapfunc, reducefunc, out='m/r-out').next()
+            somedoc = next(MapReduceModelWithCustomPrimaryKey.objects.map_reduce(
+                            mapfunc, reducefunc, out='m/r-out'))
         self.assertEqual(somedoc.key, 'bar') # Ordered by pk.
         self.assertEqual(somedoc.value, None)
         obj = somedoc.model.objects.get(pk=somedoc.key)
@@ -122,7 +125,7 @@ class RawQueryTests(TestCase):
 
     def setUp(self):
 
-        for i in xrange(10):
+        for i in range(10):
             MapReduceModel.objects.create(n=i, m=i * 2)
 
     def test_raw_query(self):
@@ -240,8 +243,8 @@ class FullTextTest(TestCase):
 class DistinctTests(TestCase):
 
     def test_distinct(self):
-        for i in xrange(10):
-            for j in xrange(i):
+        for i in range(10):
+            for j in range(i):
                 MapReduceModel.objects.create(n=i, m=i * 2)
 
         self.assertEqual(MapReduceModel.objects.distinct('m'),

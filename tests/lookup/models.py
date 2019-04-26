@@ -4,6 +4,7 @@
 This demonstrates features of the database API.
 """
 
+from builtins import object
 from django.conf import settings
 from django.db import models, DEFAULT_DB_ALIAS, connection
 
@@ -11,7 +12,7 @@ from django.db import models, DEFAULT_DB_ALIAS, connection
 class Author(models.Model):
     name = models.CharField(max_length=100)
 
-    class Meta:
+    class Meta(object):
         ordering = ('name', )
 
 
@@ -20,7 +21,7 @@ class Article(models.Model):
     pub_date = models.DateTimeField()
     author = models.ForeignKey(Author, blank=True, null=True)
 
-    class Meta:
+    class Meta(object):
         ordering = ('-pub_date', 'headline')
 
     def __unicode__(self):
@@ -31,5 +32,5 @@ class Tag(models.Model):
     articles = models.ManyToManyField(Article)
     name = models.CharField(max_length=100)
 
-    class Meta:
+    class Meta(object):
         ordering = ('name', )

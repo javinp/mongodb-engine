@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from builtins import str
 from datetime import datetime
 from operator import attrgetter
 
@@ -11,7 +13,7 @@ try:
 except ImportError:
     from pymongo.objectid import ObjectId
 
-from models import Author, Article, Tag
+from .models import Author, Article, Tag
 
 
 class LookupTests(TestCase):
@@ -393,7 +395,7 @@ class LookupTests(TestCase):
         try:
             Article.objects.filter(pub_date_year='2005').count()
             self.fail("FieldError not raised.")
-        except FieldError, ex:
+        except FieldError as ex:
             self.assertEqual(
                 str(ex),
                 "Cannot resolve keyword 'pub_date_year' into field. "
@@ -401,7 +403,7 @@ class LookupTests(TestCase):
         try:
             Article.objects.filter(headline__starts='Article')
             self.fail("FieldError not raised.")
-        except FieldError, ex:
+        except FieldError as ex:
             self.assertEqual(
                 str(ex),
                 "Join on field 'headline' not permitted. "

@@ -1,4 +1,5 @@
-from settings_base import *
+from __future__ import absolute_import
+from .settings_base import *
 
 
 DEFAULT_APPS = [

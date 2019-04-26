@@ -1,3 +1,4 @@
+from builtins import object
 from django.db import models
 
 from djangotoolbox.fields import RawField, ListField, DictField, \
@@ -14,7 +15,7 @@ from query.models import Post
 class DescendingIndexModel(models.Model):
     desc = models.IntegerField()
 
-    class MongoMeta:
+    class MongoMeta(object):
         descending_indexes = ['desc']
 
 
@@ -44,7 +45,7 @@ class IndexTestModel(models.Model):
     sparse_index_cmp_1 = models.IntegerField(db_index=True)
     sparse_index_cmp_2 = models.IntegerField(db_index=True)
 
-    class MongoMeta:
+    class MongoMeta(object):
         sparse_indexes = ['sparse_index', 'sparse_index_unique',
                           ('sparse_index_cmp_1', 'sparse_index_cmp_2')]
         descending_indexes = ['descending_index',
@@ -58,7 +59,7 @@ class IndexTestModel2(models.Model):
     a = models.IntegerField(db_index=True)
     b = models.IntegerField(db_index=True)
 
-    class MongoMeta:
+    class MongoMeta(object):
         index_together = ['a', ('b', -1)]
 
 
@@ -82,10 +83,10 @@ class NewStyleIndexesTestModel(models.Model):
     embedded = EmbeddedModelField(CustomColumnEmbeddedModel)
     embedded_list = ListField(EmbeddedModelField(CustomColumnEmbeddedModel))
 
-    class Meta:
+    class Meta(object):
         unique_together = [('f2', 'custom_column'), ('f2', 'f3')]
 
-    class MongoMeta:
+    class MongoMeta(object):
         indexes = [
             [('f1', -1)],
             {'fields': 'f2', 'sparse': True},
@@ -124,14 +125,14 @@ class CustomIDModel2(models.Model):
 class CappedCollection(models.Model):
     n = models.IntegerField(default=42)
 
-    class MongoMeta:
+    class MongoMeta(object):
         capped = True
         collection_size = 10
 
 
 class CappedCollection2(models.Model):
 
-    class MongoMeta:
+    class MongoMeta(object):
         capped = True
         collection_size = 1000
         collection_max = 2
@@ -140,6 +141,6 @@ class CappedCollection2(models.Model):
 class CappedCollection3(models.Model):
     n = models.IntegerField(default=43)
 
-    class MongoMeta:
+    class MongoMeta(object):
         capped = True
         collection_size = 1000

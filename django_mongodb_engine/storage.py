@@ -1,11 +1,15 @@
+from future import standard_library
+
 import os
-import urlparse
+import urllib.parse
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.storage import Storage
 from django.utils.encoding import filepath_to_uri
 
 from gridfs import GridFS, NoFile
+
+standard_library.install_aliases()
 
 
 def _get_subcollections(collection):
@@ -125,7 +129,7 @@ class GridFSStorage(Storage):
     def url(self, name):
         if self.base_url is None:
             raise ValueError("This file is not accessible via a URL.")
-        return urlparse.urljoin(self.base_url, filepath_to_uri(name))
+        return urllib.parse.urljoin(self.base_url, filepath_to_uri(name))
 
     def created_time(self, path):
         """

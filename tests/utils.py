@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import connections
 from django.db.models import Model
 from django.test import TestCase
-from django.utils.unittest import skip
+
 
 class TestCase(TestCase):
 
@@ -20,7 +20,7 @@ def skip_all_except(*tests):
     class meta(type):
 
         def __new__(cls, name, bases, dict):
-            for attr in dict.keys():
+            for attr in list(dict.keys()):
                 if attr.startswith('test_') and attr not in tests:
                     del dict[attr]
             return type.__new__(cls, name, bases, dict)

@@ -14,6 +14,9 @@ function reduce(key, values) {
 
 __test__ = {
     'mr': """
+
+
+>>> from __future__ import print_function
 >>> from models import Author, Article
 
 >>> bob = Author.objects.create()
@@ -24,7 +27,7 @@ __test__ = {
 
 Map/Reduce over all articles:
 >>> for pair in Article.objects.map_reduce(mapfunc, reducefunc, 'wordcount'):
-...     print pair.key, pair.value
+...     print(pair.key, pair.value)
 A 2.0
 B 2.0
 C 2.0
@@ -34,7 +37,7 @@ E 1.0
 Map/Reduce over Bob's articles:
 >>> for pair in Article.objects.filter(author=bob).map_reduce(
             mapfunc, reducefunc, 'wordcount'):
-...    print pair.key, pair.value
+...    print(pair.key, pair.value)
 A 1.0
 B 1.0
 C 1.0

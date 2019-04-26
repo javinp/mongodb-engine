@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import datetime
 from operator import attrgetter
 
@@ -9,8 +10,8 @@ try:
 except ImportError:
     from pymongo.objectid import ObjectId
 
-from models import *
-from utils import *
+from .models import *
+from .utils import *
 
 
 class BasicQueryTests(TestCase):
@@ -25,7 +26,7 @@ class BasicQueryTests(TestCase):
         Blog.objects.create(title='blog1')
         self.assertEqual(Blog.objects.count(), 1)
         blog2 = Blog.objects.create(title='blog2')
-        self.assertIsInstance(blog2.pk, unicode)
+        self.assertIsInstance(blog2.pk, str)
         self.assertEqual(Blog.objects.count(), 2)
         blog2.delete()
         self.assertEqual(Blog.objects.count(), 1)
@@ -343,7 +344,7 @@ class BasicQueryTests(TestCase):
         entry2 = Post.objects.create(blog=blog, title='footitle2',
                                      content='foocontent2')
         self.assertEqualLists(
-            Post.objects.values(),
+            list(Post.objects.values()),
             [{'blog_id': blog.id, 'title': u'footitle', 'id': entry.id,
               'content': u'foocontent', 'date_published': None},
              {'blog_id': blog.id, 'title': u'footitle2', 'id': entry2.id,
@@ -602,8 +603,8 @@ class OrLookupsTests(TestCase):
             3)
 
         self.assertQuerysetEqual(
-            Article.objects.filter(Q(headline__startswith='Hello'),
-                                   Q(headline__contains='bye')).values(),
+            list(Article.objects.filter(Q(headline__startswith='Hello'),
+                                   Q(headline__contains='bye')).values()),
             [{'headline': "Hello and goodbye", 'id': self.a3,
               'pub_date': datetime.datetime(2005, 11, 29)}],
             lambda o: o)

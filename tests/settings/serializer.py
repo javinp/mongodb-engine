@@ -1,3 +1,4 @@
+from builtins import str
 from django_mongodb_engine.creation import DatabaseCreation
 from django.core.serializers.json import \
     Serializer, Deserializer as JSONDeserializer

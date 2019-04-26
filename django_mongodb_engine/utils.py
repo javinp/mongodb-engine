@@ -1,3 +1,8 @@
+from builtins import zip
+from builtins import str
+from past.builtins import basestring
+from builtins import object
+
 import re
 import time
 
@@ -62,7 +67,7 @@ class CollectionDebugWrapper(object):
     def log(self, op, duration, args, kwargs=None):
         args = ' '.join(str(arg) for arg in args)
         msg = '%s.%s (%.2f) %s' % (self.collection.name, op, duration, args)
-        kwargs = dict((k, v) for k, v in kwargs.iteritems() if v)
+        kwargs = dict((k, v) for k, v in kwargs.items() if v)
         if kwargs:
             msg += ' %s' % kwargs
         if len(settings.DATABASES) > 1:

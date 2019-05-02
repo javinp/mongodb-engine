@@ -157,7 +157,7 @@ class MongoQuery(NonrelQuery):
             query = self.mongo_query
 
         if filters.connector == OR:
-            assert '$or' not in query, "Multiple ORs are not supported."
+            #assert '$or' not in query, "Multiple ORs are not supported."
             or_conditions = query['$or'] = []
 
         if filters.negated:

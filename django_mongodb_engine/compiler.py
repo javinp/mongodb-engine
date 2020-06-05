@@ -84,10 +84,15 @@ class MongoQuery(NonrelQuery):
     @safe_call
     def count(self, limit=None, with_limit_and_skip=False):
         results = self._get_results()
+
+        if limit is not None:
+            results.limit(limit)
+        return results.count(with_limit_and_skip=True)
+
         #################################
         # Put 10000 hard-limit on count #
         #################################
-        return results.limit(10000).count(with_limit_and_skip=True)
+        #return results.limit(10001).count(with_limit_and_skip=True)
 
     @safe_call
     def order_by(self, ordering):
